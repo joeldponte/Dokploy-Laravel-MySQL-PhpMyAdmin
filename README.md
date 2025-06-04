@@ -5,7 +5,7 @@ Repositorio para crear con Dokploy contenedores de Laravel + MySQL + PhpMyAdmin.
 dokploy up
 ```
 
-###- **Acceso a los servicios**
+### - **Acceso a los servicios**
 Para cada entorno, puedes configurar variables en un archivo '.env':
 
 **- Desarrollo:**
