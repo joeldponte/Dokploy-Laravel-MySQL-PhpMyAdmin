@@ -1,6 +1,6 @@
 # Dokploy-Laravel-MySQL-PhpMyAdmin
 
-Repositorio para crear con Dokploy contenedores de Laravel + MySQL + PhpMyAdmin. Usa el archivo dokploy.yaml para crear todo. Usa el siguiente comando para iniciar todo:
+Repositorio para crear con Dokploy contenedores de Laravel + MySQL + PhpMyAdmin. Usa el archivo 'dokploy.yaml' para crear todo. Usa el siguiente comando para iniciar todo:
 ```
 dokploy up
 ```
