@@ -1,53 +1,57 @@
 services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - network
+
   laravel:
     image: php:8.2-fpm
-    container_name: laravel_app
+    container_name: laravel
     volumes:
-      - .:/var/www/html
+      - ./laravel:/var/www/html
+      - storage:/var/www/html/storage
     working_dir: /var/www/html
     environment:
       - APP_ENV=${APP_ENV}
-      - APP_KEY=${APP_KEY}
-      - DB_HOST=mysql_db
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
-    networks:
-      - laravel_network
+      - DB_HOST=${MYSQL_HOST}
+      - DB_DATABASE=${MYSQL_DATABASE}
+      - DB_USERNAME=${MYSQL_USER}
+      - DB_PASSWORD=${MYSQL_PASSWORD}
     depends_on:
       - mysql
-
-  mysql:
-    image: mysql:8.0
-    container_name: mysql_db
-    restart: always
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      - MYSQL_DATABASE=${DB_DATABASE}
-      - MYSQL_USER=${DB_USERNAME}
-      - MYSQL_PASSWORD=${DB_PASSWORD}
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
     networks:
-      - laravel_network
+      - network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin_ui
+    container_name: phpmyadmin
     restart: always
     environment:
-      - PMA_HOST=mysql_db
+      - PMA_HOST=${MYSQL_HOST}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "8080:80"
+    depends_on:
+      - mysql
+      - laravel
     networks:
-      - laravel_network
+      - network
 
 networks:
-  laravel_network:
+  network:
     driver: bridge
 
 volumes:
-  mysql_data:
+  database:
+    driver: local
+  storage:
+    driver: local
