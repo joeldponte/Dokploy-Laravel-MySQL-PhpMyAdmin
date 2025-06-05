@@ -1,0 +1,57 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql_db
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=laravel_prod
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=secret
+    volumes:
+      - database:/var/lib/mysql
+    networks:
+      - laravel_network
+
+  laravel:
+    image: nginx-php:latest
+    container_name: laravel_app
+    volumes:
+      - ./laravel:/var/www/html
+      - storage:/var/www/html/storage
+    working_dir: /var/www/html
+    environment:
+      - APP_ENV=production
+      - DB_HOST=mysql_db
+      - DB_DATABASE=laravel_prod
+      - DB_USERNAME=root
+      - DB_PASSWORD=secret
+    depends_on:
+      - mysql
+    networks:
+      - laravel_network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin_ui
+    restart: always
+    environment:
+      - PMA_HOST=mysql_db
+      - MYSQL_ROOT_PASSWORD=secret
+    ports:
+      - "8080:80"
+    depends_on:
+      - mysql
+      - laravel
+    networks:
+      - laravel_network
+
+networks:
+  laravel_network:
+    driver: bridge
+
+volumes:
+  database:
+    driver: local
+  storage:
+    driver: local
